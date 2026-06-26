@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>قصي اشرف خليل الرياطي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #D4AF37;
+      --gold-light: #F3E5AB;
+      --gold-dark: #C9A84C;
+      --bg: #08091a;
+      --card: #0f1028;
+      --text: #f5f0e8;
+      --muted: #9b9280;
+      --border: rgba(212,175,55,0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 100;
+      background: linear-gradient(to right, var(--bg), var(--gold), var(--bg));
+    }
+
+    /* ── MUSIC BUTTON ── */
+    #music-btn {
+      position: fixed; bottom: 24px; left: 24px; z-index: 100;
+      background: rgba(13,14,34,0.88); backdrop-filter: blur(10px);
+      border: 1px solid var(--border); color: var(--gold);
+      padding: 12px 24px; border-radius: 999px;
+      font-family: 'Amiri', serif; font-size: 16px; cursor: pointer;
+      box-shadow: 0 0 15px rgba(212,175,55,0.15); transition: all 0.3s;
+      opacity: 0; animation: fadeIn 1s 1.5s forwards;
+    }
+    #music-btn:hover { background: var(--gold); color: var(--bg); }
+    #music-btn:disabled { opacity: 0.4; cursor: wait; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100dvh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 80px 20px 60px; position: relative; text-align: center;
+      background: radial-gradient(ellipse at center, rgba(212,175,55,0.05) 0%, var(--bg) 70%);
+    }
+    .hero-photo-wrap {
+      position: relative; margin-bottom: 48px;
+      animation: fadeInDown 0.8s 0.2s both;
+    }
+    .hero-photo-wrap::before {
+      content: ''; position: absolute; inset: -14px; border-radius: 50%;
+      background: rgba(212,175,55,0.18); filter: blur(22px);
+      animation: pulse 3s ease-in-out infinite;
+    }
+    .hero-photo {
+      width: 260px; height: 260px; border-radius: 50%; object-fit: cover;
+      border: 4px solid var(--gold);
+      box-shadow: 0 0 40px rgba(212,175,55,0.3);
+      position: relative; z-index: 1;
+    }
+    .hero-name {
+      font-family: 'Amiri', serif;
+      font-size: clamp(2.2rem, 7vw, 5rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold-dark) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      line-height: 1.3; margin-bottom: 16px;
+      animation: fadeInUp 0.8s 0.4s both;
+    }
+    .hero-sub {
+      font-size: 1.15rem; color: var(--muted); letter-spacing: 1px;
+      animation: fadeInUp 0.8s 0.6s both;
+    }
+    .hero-sub span { color: var(--gold); margin: 0 8px; }
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center;
+      color: rgba(212,175,55,0.5); font-family: 'Amiri', serif; font-size: 14px; gap: 6px;
+      animation: fadeIn 1s 2s both;
+    }
+    .scroll-arrow { animation: bounce 2s ease-in-out infinite; font-size: 22px; }
+
+    /* ── SECTIONS ── */
+    section { padding: 88px 20px; }
+    section:nth-child(even) { background: rgba(212,175,55,0.03); }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    /* ── SECTION TITLE ── */
+    .section-title { text-align: center; margin-bottom: 56px; }
+    .section-title h2 {
+      font-family: 'Amiri', serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      color: var(--gold); display: inline-block; position: relative; padding-bottom: 16px;
+    }
+    .section-title h2::after {
+      content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 80px; height: 3px; background: rgba(212,175,55,0.4); border-radius: 2px;
+    }
+    .ornament {
+      display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px;
+    }
+    .ornament::before, .ornament::after {
+      content: ''; height: 1px; width: 80px;
+      background: linear-gradient(to right, transparent, rgba(212,175,55,0.5), transparent);
+    }
+    .ornament-star { color: var(--gold); font-size: 18px; }
+
+    /* ── ABOUT ── */
+    .about-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+      padding: 48px; text-align: center;
+      font-family: 'Amiri', serif; font-size: 1.25rem; line-height: 2.1;
+      color: rgba(245,240,232,0.9); box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    }
+
+    /* ── GRIDS ── */
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px; }
+
+    /* ── FIELD CARDS ── */
+    .field-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 28px 18px; display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 12px;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; cursor: default;
+    }
+    .field-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(212,175,55,0.1);
+      border-color: rgba(212,175,55,0.5);
+    }
+    .field-icon {
+      width: 54px; height: 54px; border-radius: 50%;
+      background: rgba(212,175,55,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; transition: background 0.3s;
+    }
+    .field-card:hover .field-icon { background: var(--gold); }
+    .field-card h3 { font-family: 'Amiri', serif; font-size: 1.05rem; }
+
+    /* ── SKILLS ── */
+    .skills-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    .skill-tag {
+      padding: 10px 22px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 999px; font-family: 'Amiri', serif; font-size: 1rem;
+      transition: all 0.3s; cursor: default;
+    }
+    .skill-tag:hover { border-color: var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+
+    /* ── LIST ITEMS ── */
+    .list-item {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 15px 18px;
+      font-family: 'Amiri', serif; font-size: 1rem;
+      margin-bottom: 10px; transition: border-color 0.3s;
+    }
+    .list-item:hover { border-color: rgba(212,175,55,0.45); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+    /* ── PROJECTS ── */
+    .project-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+      overflow: hidden; display: flex; flex-direction: column;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .project-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(212,175,55,0.1); }
+    .project-banner {
+      height: 160px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.15), var(--bg));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 58px; border-bottom: 1px solid var(--border);
+    }
+    .project-body { padding: 28px; flex: 1; display: flex; flex-direction: column; }
+    .project-body h3 { font-family: 'Amiri', serif; font-size: 1.35rem; color: var(--gold); margin-bottom: 10px; }
+    .project-body p { color: var(--muted); font-family: 'Amiri', serif; font-size: 1rem; line-height: 1.8; flex: 1; }
+    .visit-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--gold); color: var(--bg); border: none; border-radius: 12px;
+      padding: 12px 24px; margin-top: 20px;
+      font-family: 'Amiri', serif; font-size: 1rem; font-weight: 700;
+      text-decoration: none; transition: opacity 0.3s;
+    }
+    .visit-btn:hover { opacity: 0.85; }
+
+    /* ── CERTIFICATES ── */
+    .cert-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 14px; display: flex; flex-direction: column;
+      transition: transform 0.3s, border-color 0.3s; cursor: pointer;
+    }
+    .cert-card:hover { transform: translateY(-4px); border-color: rgba(212,175,55,0.5); }
+    .cert-img-wrap {
+      border-radius: 8px; overflow: hidden;
+      border: 2px solid rgba(212,175,55,0.25); margin-bottom: 12px;
+    }
+    .cert-img-wrap img {
+      width: 100%; display: block; transition: transform 0.5s;
+      aspect-ratio: 4/3; object-fit: cover;
+    }
+    .cert-card:hover .cert-img-wrap img { transform: scale(1.04); }
+    .cert-card h4 { font-family: 'Amiri', serif; color: var(--gold); text-align: center; font-size: 1.05rem; margin-bottom: 5px; }
+    .cert-card p { color: var(--muted); text-align: center; font-size: 0.88rem; }
+
+    /* ── SPEC BADGE ── */
+    .spec-badge {
+      display: inline-block; padding: 12px 32px;
+      background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 999px; color: var(--gold);
+      font-family: 'Amiri', serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 44px;
+    }
+
+    /* ── GRADES ── */
+    .grades-box {
+      border: 1px dashed rgba(212,175,55,0.3); border-radius: 24px;
+      padding: 72px 40px; text-align: center;
+    }
+    .grades-box .icon { font-size: 52px; margin-bottom: 18px; opacity: 0.4; }
+    .grades-box h3 { font-family: 'Amiri', serif; font-size: 1.4rem; color: rgba(245,240,232,0.7); margin-bottom: 10px; }
+    .grades-box p { color: var(--muted); font-family: 'Amiri', serif; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); background: var(--card); padding: 48px 20px; text-align: center; }
+    footer h2 {
+      font-family: 'Amiri', serif; font-size: 1.5rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold-dark));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 8px;
+    }
+    footer .sub { color: var(--muted); font-family: 'Amiri', serif; margin-bottom: 14px; }
+    footer .copy { color: rgba(155,146,128,0.5); font-size: 0.85rem; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeIn    { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes fadeInDown{ from { opacity: 0; transform: translateY(-30px) } to { opacity: 1; transform: translateY(0) } }
+    @keyframes fadeInUp  { from { opacity: 0; transform: translateY(30px)  } to { opacity: 1; transform: translateY(0) } }
+    @keyframes pulse     { 0%,100% { opacity:.5; transform:scale(1) } 50% { opacity:.8; transform:scale(1.06) } }
+    @keyframes bounce    { 0%,100% { transform:translateY(0) } 50% { transform:translateY(8px) } }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.88); align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-img { max-width: 90vw; max-height: 90vh; border-radius: 12px; border: 2px solid var(--gold); }
+    .modal-close {
+      position: absolute; top: 18px; left: 18px; font-size: 30px;
+      color: var(--gold); cursor: pointer; background: none; border: none; font-family: serif;
+    }
+
+    @media (max-width: 600px) {
+      .hero-photo { width: 200px; height: 200px; }
+      .about-card { padding: 24px 18px; font-size: 1.05rem; }
+      .grid-2 { grid-template-columns: 1fr; gap: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+<div id="yt-player" style="position:absolute;pointer-events:none;width:0;height:0;overflow:hidden;"></div>
+<button id="music-btn" onclick="toggleMusic()">تشغيل الأغنية 🎵</button>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero">
+  <div class="hero-photo-wrap">
+    <img class="hero-photo" src="photo.jpg" alt="قصي اشرف خليل الرياطي" />
+  </div>
+  <h1 class="hero-name">قصي اشرف خليل الرياطي</h1>
+  <p class="hero-sub">طالب تكنولوجيا معلومات <span>|</span> مطور مواقع وتطبيقات</p>
+  <div class="scroll-hint">
+    <span>استكشف المزيد</span>
+    <div class="scroll-arrow">⌄</div>
+  </div>
+</section>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-title reveal">
+      <h2>نبذة عني</h2>
+      <div class="ornament"><span class="ornament-star">✦</span></div>
+    </div>
+    <div class="about-card reveal">
+      طالب مهتم بمجال تكنولوجيا المعلومات، وأسعى إلى تطوير مهاراتي العملية في تصميم وتطوير مواقع الويب، وتطوير تطبيقات الهواتف، والبنية التحتية للشبكات، وإدارة الأنظمة. أحرص على تنفيذ المشاريع بجودة عالية، وأهتم بالتفاصيل وتحسين تجربة المستخدم في تصميم واجهات المواقع.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ACADEMIC FIELD ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-title reveal">
+      <h2>المجال الدراسي</h2>
+      <div class="ornament"><span class="ornament-star">✦</span></div>
+    </div>
+    <div style="text-align:center" class="reveal">
+      <div class="spec-badge">تكنولوجيا المعلومات (IT)</div>
+    </div>
+    <div class="grid-3">
+      <div class="field-card reveal"><div class="field-icon">💻</div><h3>تصميم وتطوير مواقع الويب</h3></div>
+      <div class="field-card reveal"><div class="field-icon">📱</div><h3>تطوير تطبيقات الهواتف</h3></div>
+      <div class="field-card reveal"><div class="field-icon">🌐</div><h3>البنية التحتية للشبكات</h3></div>
+      <div class="field-card reveal"><div class="field-icon">🖥️</div><h3>الخوادم (Servers)</h3></div>
+      <div class="field-card reveal"><div class="field-icon">⚙️</div><h3>أنظمة ERP</h3></div>
+      <div class="field-card reveal"><div class="field-icon">🔒</div><h3>أمن المعلومات الأساسي</h3></div>
+      <div class="field-card reveal"><div class="field-icon">📊</div><h3>تحليل متطلبات الأعمال</h3></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SKILLS ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-title reveal">
+      <h2>المهارات</h2>
+      <div class="ornament"><span class="ornament-star">✦</span></div>
+    </div>
+    <div class="skills-wrap reveal">
+      <div class="skill-tag">تصميم وتطوير مواقع ويب حديثة</div>
+      <div class="skill-tag">تطوير تطبيقات الهواتف</div>
+      <div class="skill-tag">استخدام الذكاء الاصطناعي في تطوير المشاريع</div>
+      <div class="skill-tag">حل المشكلات التقنية</div>
+      <div class="skill-tag">العمل على مشاريع البنية التحتية للشبكات</div>
+      <div class="skill-tag">الاهتمام بالتفاصيل والدقة في تنفيذ الأعمال</div>
+      <div class="skill-tag">التعلم السريع واكتساب مهارات جديدة</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ INTERESTS & QUALITIES ══════════ -->
+<section>
+  <div class="container">
+    <div class="grid-2">
+      <div>
+        <div class="section-title reveal">
+          <h2>الاهتمامات</h2>
+          <div class="ornament"><span class="ornament-star">✦</span></div>
+        </div>
+        <div class="list-item reveal"><div class="dot"></div>تصميم واجهات المواقع والتطبيقات (UI Design)</div>
+        <div class="list-item reveal"><div class="dot"></div>تطوير مواقع الويب (Web Development)</div>
+        <div class="list-item reveal"><div class="dot"></div>تطوير تطبيقات الهواتف (Mobile App Development)</div>
+        <div class="list-item reveal"><div class="dot"></div>تعلم التقنيات الحديثة في مجال تكنولوجيا المعلومات</div>
+        <div class="list-item reveal"><div class="dot"></div>الشبكات وإدارة الأنظمة</div>
+        <div class="list-item reveal"><div class="dot"></div>تحسين تجربة المستخدم (UX)</div>
+        <div class="list-item reveal"><div class="dot"></div>الذكاء الاصطناعي واستخدامه في تطوير المشاريع</div>
+      </div>
+      <div>
+        <div class="section-title reveal">
+          <h2>الصفات الشخصية</h2>
+          <div class="ornament"><span class="ornament-star">✦</span></div>
+        </div>
+        <div class="list-item reveal"><span style="color:var(--gold)">🏅</span> سريع التعلم</div>
+        <div class="list-item reveal"><span style="color:var(--gold)">🏅</span> منظم في العمل</div>
+        <div class="list-item reveal"><span style="color:var(--gold)">🏅</span> أستطيع العمل بشكل فردي أو ضمن فريق</div>
+        <div class="list-item reveal"><span style="color:var(--gold)">🏅</span> أتحمل المسؤولية</div>
+        <div class="list-item reveal"><span style="color:var(--gold)">🏅</span> أسعى لتطوير نفسي باستمرار</div>
+        <div class="list-item reveal"><span style="color:var(--gold)">🏅</span> أهتم بإخراج العمل بأفضل صورة ممكنة</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PROJECTS ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-title reveal">
+      <h2>مشاريعي</h2>
+      <div class="ornament"><span class="ornament-star">✦</span></div>
+    </div>
+    <div class="grid-2">
+      <div class="project-card reveal">
+        <div class="project-banner">🖥️</div>
+        <div class="project-body">
+          <h3>Portfolio Website</h3>
+          <p>موقع بورتفوليو شخصي تفاعلي يعرض المهارات والمشاريع بطريقة احترافية ومميزة.</p>
+          <a class="visit-btn" href="https://qusay2009.github.io/portfolio2009/" target="_blank" rel="noopener noreferrer">
+            زيارة الموقع ↗
+          </a>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-banner">🏡</div>
+        <div class="project-body">
+          <h3>Loving Homes (موقع فندق الكلاب)</h3>
+          <p>موقع فندق للكلاب — مشروع تصميم وتطوير ويب متكامل مع واجهات جذابة ومريحة للمستخدم.</p>
+          <a class="visit-btn" href="https://qusayalrytai-art.github.io/Loving-Homes.github.io/" target="_blank" rel="noopener noreferrer">
+            زيارة الموقع ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CERTIFICATES ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-title reveal">
+      <h2>شهاداتي</h2>
+      <div class="ornament"><span class="ornament-star">✦</span></div>
+    </div>
+    <div class="grid-3">
+      <div class="cert-card reveal" onclick="openModal(0)">
+        <div class="cert-img-wrap">
+          <img id="ci0" src="cert1.jpg" alt="شهادة شكر وتقدير" />
+        </div>
+        <h4>شهادة شكر وتقدير</h4>
+        <p>مدرسة عبد الله بن أبي السرح الثانوية للبنين</p>
+      </div>
+      <div class="cert-card reveal" onclick="openModal(1)">
+        <div class="cert-img-wrap">
+          <img id="ci1" src="cert2.jpg" alt="شهادة مشاركة" />
+        </div>
+        <h4>شهادة مشاركة</h4>
+        <p>مؤسسة ولي العهد — برنامج الإبداع والفنون</p>
+      </div>
+      <div class="cert-card reveal" onclick="openModal(2)">
+        <div class="cert-img-wrap">
+          <img id="ci2" src="cert3.jpg" alt="شهادة تقدير" />
+        </div>
+        <h4>شهادة تقدير</h4>
+        <p>مديرية التربية والتعليم — BTEC تكنولوجيا المعلومات</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ GRADES ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-title reveal">
+      <h2>سجلي الأكاديمي</h2>
+      <div class="ornament"><span class="ornament-star">✦</span></div>
+    </div>
+    <div class="grades-box reveal">
+      <div class="icon">🏆</div>
+      <h3>قريباً</h3>
+      <p>سيتم إضافة الدرجات الأكاديمية والتفاصيل الدراسية في هذا القسم قريباً.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <h2>قصي اشرف خليل الرياطي</h2>
+  <p class="sub">Qusay Ashraf Khalil Al-Ryati</p>
+  <p class="copy">© 2026 جميع الحقوق محفوظة</p>
+</footer>
+
+<!-- ══════════ MODAL ══════════ -->
+<div class="modal-overlay" id="modal" onclick="closeModal()">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <img class="modal-img" id="modal-img" src="" alt="شهادة" onclick="event.stopPropagation()" />
+</div>
+
+<script>
+  // ── Scroll Reveal ──
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(function(r) { obs.observe(r); });
+
+  // ── Music Player (song.mp3) ──
+  var isPlaying = false;
+  var audioEl = null;
+
+  function ensureAudio() {
+    if (audioEl) return audioEl;
+
+    audioEl = document.createElement('audio');
+    audioEl.src = 'song.mp3';
+    audioEl.preload = 'auto';
+    audioEl.loop = true;
+    audioEl.style.display = 'none';
+    document.body.appendChild(audioEl);
+    return audioEl;
+  }
+
+  function toggleMusic() {
+    var btn = document.getElementById('music-btn');
+    var audio = ensureAudio();
+
+    if (!isPlaying) {
+      // تشغيل
+      audio.currentTime = 0;
+      var p = audio.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(function () {
+          // إذا المتصفح منع التشغيل بسبب سياسة التفاعل
+        });
+      }
+      isPlaying = true;
+      btn.textContent = 'إيقاف الأغنية ⏸';
+    } else {
+      // إيقاف
+      try { audio.pause(); } catch (e) {}
+      audio.currentTime = 0;
+      isPlaying = false;
+      btn.textContent = 'تشغيل الأغنية 🎵';
+    }
+  }
+
+
+  // ── Modal ──
+  function openModal(idx) {
+    var srcs = [
+      document.getElementById('ci0').src,
+      document.getElementById('ci1').src,
+      document.getElementById('ci2').src
+    ];
+    document.getElementById('modal-img').src = srcs[idx];
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+
+</body>
+</html>
