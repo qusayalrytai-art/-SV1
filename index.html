@@ -53,17 +53,86 @@
     .hero-photo-wrap {
       position: relative; margin-bottom: 48px;
       animation: fadeInDown 0.8s 0.2s both;
+      perspective: 1000px;
+      width: 260px; height: 260px;
+      cursor: grab;
     }
+    .hero-photo-wrap:active { cursor: grabbing; }
     .hero-photo-wrap::before {
       content: ''; position: absolute; inset: -14px; border-radius: 50%;
       background: rgba(212,175,55,0.18); filter: blur(22px);
       animation: pulse 3s ease-in-out infinite;
+      z-index: 0;
     }
-    .hero-photo {
-      width: 260px; height: 260px; border-radius: 50%; object-fit: cover;
+
+    /* ── بطاقة الـ Flip ── */
+    .flip-card-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+    }
+    .flip-card-inner.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flip-front, .flip-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 50%;
+      overflow: hidden;
       border: 4px solid var(--gold);
       box-shadow: 0 0 40px rgba(212,175,55,0.3);
-      position: relative; z-index: 1;
+    }
+
+    .flip-front {
+      z-index: 2;
+    }
+    .flip-front img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(135deg, #0f1028 0%, #1a1b40 50%, #0f1028 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px; padding: 20px;
+      z-index: 1;
+    }
+    .flip-back-icon {
+      font-size: 42px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .flip-back-name {
+      font-family: 'Amiri', serif;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--gold);
+      text-align: center;
+    }
+    .flip-back-title {
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .flip-hint {
+      font-size: 0.65rem;
+      color: rgba(212,175,55,0.4);
+      font-family: 'Cairo', sans-serif;
+      margin-top: 6px;
+    }
+
+    /* ── تلميح الضغط ── */
+    .tap-hint {
+      position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
+      font-size: 0.7rem; color: rgba(212,175,55,0.5);
+      font-family: 'Cairo', sans-serif;
+      white-space: nowrap;
+      animation: fadeIn 1s 1.5s both;
     }
     .hero-name {
       font-family: 'Amiri', serif;
@@ -276,8 +345,242 @@
     @keyframes pulse     { 0%,100% { opacity:.5; transform:scale(1) } 50% { opacity:.8; transform:scale(1.06) } }
     @keyframes bounce    { 0%,100% { transform:translateY(0) } 50% { transform:translateY(8px) } }
 
-    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    /* ── شريط التمرير المتحرك ── */
+    @keyframes shimmerBar {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .top-bar {
+      background: linear-gradient(90deg, var(--bg), var(--gold), var(--gold-light), var(--gold), var(--bg));
+      background-size: 200% 100%;
+      animation: shimmerBar 4s linear infinite;
+    }
+
+    /* ── تأثير النجوم المتلألئة ── */
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* ── REVEAL مع تأخير متسلسل ── */
+    .reveal { opacity: 0; transform: translateY(35px); transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.visible:nth-child(1) { transition-delay: 0s; }
+    .reveal.visible:nth-child(2) { transition-delay: 0.1s; }
+    .reveal.visible:nth-child(3) { transition-delay: 0.2s; }
+    .reveal.visible:nth-child(4) { transition-delay: 0.3s; }
+    .reveal.visible:nth-child(5) { transition-delay: 0.4s; }
+    .reveal.visible:nth-child(6) { transition-delay: 0.5s; }
+    .reveal.visible:nth-child(7) { transition-delay: 0.6s; }
+
+    /* ── تأثير 3D Tilt للبطاقات ── */
+    .project-card, .field-card, .cert-card {
+      transform-style: preserve-3d;
+      perspective: 800px;
+      will-change: transform;
+    }
+    .project-card.tilt, .field-card.tilt, .cert-card.tilt {
+      transition: transform 0.1s ease-out, box-shadow 0.3s;
+    }
+
+    /* ── توهج ذهبي متحرك على حدود البطاقات ── */
+    @keyframes borderGlow {
+      0%, 100% { border-color: rgba(212,175,55,0.2); box-shadow: 0 0 0 rgba(212,175,55,0); }
+      50% { border-color: rgba(212,175,55,0.5); box-shadow: 0 0 20px rgba(212,175,55,0.08); }
+    }
+    .project-card:hover, .field-card:hover, .cert-card:hover {
+      animation: borderGlow 2s ease-in-out infinite;
+    }
+
+    /* ── الأزرار - تأثير Ripple + توهج ── */
+    .visit-btn {
+      position: relative; overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+    }
+    .visit-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+    .visit-btn:hover::before { transform: translateX(100%); }
+    .visit-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 25px rgba(212,175,55,0.35);
+    }
+    .visit-btn:active {
+      transform: translateY(0) scale(0.97);
+      box-shadow: 0 2px 8px rgba(212,175,55,0.2);
+    }
+    .visit-btn .ripple {
+      position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      transform: scale(0); animation: rippleAnim 0.6s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* ── زر الموسيقى - نبض ── */
+    @keyframes musicPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(212,175,55,0.15); }
+      50% { box-shadow: 0 0 25px rgba(212,175,55,0.35), 0 0 50px rgba(212,175,55,0.1); }
+    }
+    #music-btn:hover { animation: musicPulse 1.5s ease-in-out infinite; }
+
+    /* ── Skill Tags تموج ── */
+    .skill-tag {
+      transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+    }
+    .skill-tag:hover {
+      transform: translateY(-4px) scale(1.05);
+      border-color: var(--gold);
+      box-shadow: 0 8px 20px rgba(212,175,55,0.2);
+      background: rgba(212,175,55,0.08);
+    }
+
+    /* ── List Items انزلاق ── */
+    .list-item {
+      transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+    }
+    .list-item:hover {
+      transform: translateX(-8px);
+      border-color: rgba(212,175,55,0.5);
+      background: rgba(212,175,55,0.04);
+      box-shadow: 4px 0 0 var(--gold);
+    }
+
+    /* ── Contact Links ── */
+    .contact-link {
+      transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+      position: relative; overflow: hidden;
+    }
+    .contact-link::after {
+      content: ''; position: absolute; bottom: 0; right: 0;
+      width: 0; height: 2px; background: var(--gold);
+      transition: width 0.4s;
+    }
+    .contact-link:hover::after { width: 100%; }
+    .contact-link:hover {
+      transform: translateY(-3px) scale(1.05);
+      border-color: rgba(212,175,55,0.6);
+      background: rgba(212,175,55,0.15);
+      box-shadow: 0 6px 20px rgba(212,175,55,0.15);
+    }
+
+    /* ── نقاط الماوس المخصصة (ديسكتوب فقط) ── */
+    .cursor-dot {
+      position: fixed; top: 0; left: 0; z-index: 999;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold); pointer-events: none;
+      transition: transform 0.1s; mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed; top: 0; left: 0; z-index: 998;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid rgba(212,175,55,0.5);
+      pointer-events: none; transition: all 0.15s ease-out;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring.hover-grow {
+      width: 56px; height: 56px;
+      border-color: var(--gold);
+      background: rgba(212,175,55,0.08);
+    }
+
+    /* ── ذرات متطايرة خلف الماوس ── */
+    .mouse-particle {
+      position: fixed; z-index: 997; pointer-events: none;
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--gold); opacity: 0.7;
+      animation: particleFade 0.8s ease-out forwards;
+    }
+    @keyframes particleFade {
+      0% { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(0) translateY(-20px); opacity: 0; }
+    }
+
+    /* ── Floating particles خلفية ── */
+    .bg-particle {
+      position: fixed; z-index: 0; pointer-events: none;
+      border-radius: 50%; background: rgba(212,175,55,0.15);
+      animation: floatParticle linear infinite;
+    }
+    @keyframes floatParticle {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ── أنيميشن Section Title ── */
+    .section-title h2 {
+      transition: all 0.4s;
+    }
+    .section-title h2::after {
+      transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+      width: 0;
+    }
+    .reveal.visible .section-title h2::after,
+    .section-title.reveal.visible h2::after {
+      width: 80px;
+    }
+
+    /* ── أزرار مغناطيسية ── */
+    .magnetic-btn {
+      transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+      will-change: transform;
+    }
+    .magnetic-btn:hover {
+      box-shadow: 0 10px 30px rgba(212,175,55,0.3);
+    }
+
+    /* ══ MOBILE ANIMATIONS ══ */
+    @media (max-width: 768px) {
+      /* إخفاء مؤشر الماوس المخصص */
+      .cursor-dot, .cursor-ring { display: none !important; }
+
+      /* تأثير الضغط على الأزرار */
+      .visit-btn:active {
+        transform: scale(0.93);
+        box-shadow: 0 0 20px rgba(212,175,55,0.3);
+      }
+
+      /* بطاقات - ضغط تفاعلي */
+      .project-card:active, .field-card:active, .cert-card:active {
+        transform: scale(0.97);
+        box-shadow: 0 0 25px rgba(212,175,55,0.15);
+      }
+
+      /* Skill tags */
+      .skill-tag:active {
+        transform: scale(0.93);
+        background: rgba(212,175,55,0.12);
+        border-color: var(--gold);
+      }
+
+      /* List items */
+      .list-item:active {
+        transform: translateX(-6px) scale(0.98);
+        border-color: rgba(212,175,55,0.5);
+        background: rgba(212,175,55,0.06);
+      }
+
+      /* Contact links */
+      .contact-link:active {
+        transform: scale(0.94);
+        background: rgba(212,175,55,0.18);
+      }
+    }
+
+    /* ── تقليل الحركة لمن يفضّل ذلك ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
 
     /* ── MODAL ── */
     .modal-overlay {
@@ -292,13 +595,21 @@
     }
 
     @media (max-width: 600px) {
-      .hero-photo { width: 200px; height: 200px; }
+      .hero-photo-wrap { width: 200px; height: 200px; }
       .about-card { padding: 24px 18px; font-size: 1.05rem; }
       .grid-2 { grid-template-columns: 1fr; gap: 32px; }
+      .flip-back-icon { font-size: 32px; }
+      .flip-back-name { font-size: 0.95rem; }
+      .flip-back-title { font-size: 0.65rem; }
+      .tap-hint { font-size: 0.6rem; }
     }
   </style>
 </head>
 <body>
+
+<!-- مؤشر ماوس مخصص -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
 <div class="top-bar"></div>
 <div id="yt-player" style="position:absolute;pointer-events:none;width:0;height:0;overflow:hidden;"></div>
@@ -306,8 +617,19 @@
 
 <!-- ══════════ HERO ══════════ -->
 <section id="hero">
-  <div class="hero-photo-wrap">
-    <img class="hero-photo" src="photo.jpg" alt="قصي اشرف خليل الرياطي" />
+  <div class="hero-photo-wrap" id="heroFlip">
+    <div class="flip-card-inner" id="flipInner">
+      <div class="flip-front">
+        <img src="photo.jpg" alt="قصي اشرف خليل الرياطي" />
+      </div>
+      <div class="flip-back">
+        <div class="flip-back-icon">💻</div>
+        <div class="flip-back-name">قصي الرياطي</div>
+        <div class="flip-back-title">مطور مواقع وتطبيقات</div>
+        <div class="flip-hint">✦ IT Student ✦</div>
+      </div>
+    </div>
+    <div class="tap-hint">اضغط للقلب • اسحب للتدوير</div>
   </div>
   <h1 class="hero-name">قصي اشرف خليل الرياطي</h1>
   <p class="hero-sub">طالب تكنولوجيا معلومات <span>|</span> مطور مواقع وتطبيقات</p>
@@ -588,6 +910,335 @@
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeModal();
   });
+</script>
+
+<!-- ══════════ ANIMATION ENGINE ══════════ -->
+<script>
+(function() {
+  var isMobile = window.matchMedia('(max-width: 768px)').matches || 'ontouchstart' in window;
+
+  // ═══════════════════════════════════════
+  // 1. مؤشر ماوس مخصص (ديسكتوب فقط)
+  // ═══════════════════════════════════════
+  if (!isMobile) {
+    var dot = document.getElementById('cursorDot');
+    var ring = document.getElementById('cursorRing');
+    var mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', function(e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      dot.style.left = mouseX - 4 + 'px';
+      dot.style.top  = mouseY - 4 + 'px';
+    });
+
+    // حركة سلسة للحلقة
+    function animateRing() {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      ring.style.left = ringX - 18 + 'px';
+      ring.style.top  = ringY - 18 + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // تكبير الحلقة عند hover على العناصر التفاعلية
+    var hoverEls = document.querySelectorAll('a, button, .project-card, .field-card, .cert-card, .skill-tag, .list-item');
+    hoverEls.forEach(function(el) {
+      el.addEventListener('mouseenter', function() { ring.classList.add('hover-grow'); });
+      el.addEventListener('mouseleave', function() { ring.classList.remove('hover-grow'); });
+    });
+
+    // ═══════════════════════════════════════
+    // 2. ذرات متطايرة خلف الماوس
+    // ═══════════════════════════════════════
+    var particleCount = 0;
+    document.addEventListener('mousemove', function(e) {
+      particleCount++;
+      if (particleCount % 3 !== 0) return; // كل 3 حركات
+      var p = document.createElement('div');
+      p.className = 'mouse-particle';
+      p.style.left = e.clientX + (Math.random() * 10 - 5) + 'px';
+      p.style.top  = e.clientY + (Math.random() * 10 - 5) + 'px';
+      document.body.appendChild(p);
+      setTimeout(function() { p.remove(); }, 800);
+    });
+  } else {
+    // إخفاء المؤشر المخصص على الهاتف
+    var dotEl = document.getElementById('cursorDot');
+    var ringEl = document.getElementById('cursorRing');
+    if (dotEl) dotEl.style.display = 'none';
+    if (ringEl) ringEl.style.display = 'none';
+  }
+
+  // ═══════════════════════════════════════
+  // 3. تأثير 3D Tilt للبطاقات (ديسكتوب)
+  // ═══════════════════════════════════════
+  if (!isMobile) {
+    var cards = document.querySelectorAll('.project-card, .field-card, .cert-card');
+    cards.forEach(function(card) {
+      card.addEventListener('mousemove', function(e) {
+        var rect = card.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var centerX = rect.width / 2;
+        var centerY = rect.height / 2;
+        var rotateX = (y - centerY) / centerY * -8;
+        var rotateY = (x - centerX) / centerX * 8;
+        card.style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-6px)';
+        card.style.boxShadow = '0 20px 40px rgba(212,175,55,0.15)';
+      });
+      card.addEventListener('mouseleave', function() {
+        card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
+        card.style.boxShadow = '';
+        card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease';
+        setTimeout(function() { card.style.transition = ''; }, 500);
+      });
+    });
+  }
+
+  // ═══════════════════════════════════════
+  // 4. تأثير Ripple على الأزرار
+  // ═══════════════════════════════════════
+  document.querySelectorAll('.visit-btn, .contact-link, #music-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      var rect = btn.getBoundingClientRect();
+      var ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      var size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+      ripple.style.top  = (e.clientY - rect.top - size / 2) + 'px';
+      btn.appendChild(ripple);
+      setTimeout(function() { ripple.remove(); }, 600);
+    });
+  });
+
+  // ═══════════════════════════════════════
+  // 5. ذرات خلفية عائمة
+  // ═══════════════════════════════════════
+  function createBgParticles() {
+    var count = isMobile ? 6 : 12;
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement('div');
+      p.className = 'bg-particle';
+      var size = Math.random() * 4 + 2;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      p.style.opacity = Math.random() * 0.3 + 0.1;
+      document.body.appendChild(p);
+    }
+  }
+  createBgParticles();
+
+  // ═══════════════════════════════════════
+  // 6. أنيميشن للهواتف - اهتزاز خفيف عند اللمس
+  // ═══════════════════════════════════════
+  if (isMobile) {
+    // تأثير لمس مع vibration خفيف
+    var touchEls = document.querySelectorAll('.project-card, .field-card, .cert-card, .skill-tag, .visit-btn, .contact-link, .list-item');
+    touchEls.forEach(function(el) {
+      el.addEventListener('touchstart', function() {
+        el.style.transition = 'transform 0.15s ease';
+        if (navigator.vibrate) navigator.vibrate(10);
+      }, { passive: true });
+    });
+
+    // Swipe-to-reveal على البطاقات
+    var projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(function(card) {
+      var startY = 0;
+      card.addEventListener('touchstart', function(e) {
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+      card.addEventListener('touchmove', function(e) {
+        var diff = startY - e.touches[0].clientY;
+        if (Math.abs(diff) < 30) {
+          var tilt = diff * 0.15;
+          card.style.transform = 'perspective(600px) rotateX(' + tilt + 'deg)';
+        }
+      }, { passive: true });
+      card.addEventListener('touchend', function() {
+        card.style.transform = '';
+        card.style.transition = 'transform 0.4s ease';
+        setTimeout(function() { card.style.transition = ''; }, 400);
+      }, { passive: true });
+    });
+  }
+
+  // ═══════════════════════════════════════
+  // 7. Parallax خفيف للـ Hero (ديسكتوب)
+  // ═══════════════════════════════════════
+  if (!isMobile) {
+    var hero = document.getElementById('hero');
+    var heroName = document.querySelector('.hero-name');
+    var heroSub = document.querySelector('.hero-sub');
+    window.addEventListener('scroll', function() {
+      var scrollY = window.pageYOffset;
+      if (scrollY < window.innerHeight) {
+        // نحرك الـ wrap بـ marginTop بدل transform عشان ما يتعارض مع الـ flip
+        var wrap = document.getElementById('heroFlip');
+        if (wrap) wrap.style.marginTop = (scrollY * 0.12) + 'px';
+        heroName.style.transform = 'translateY(' + (scrollY * 0.08) + 'px)';
+        if (heroSub) heroSub.style.transform = 'translateY(' + (scrollY * 0.05) + 'px)';
+        hero.style.opacity = 1 - (scrollY / window.innerHeight) * 0.4;
+      }
+    });
+  }
+
+  // ═══════════════════════════════════════
+  // 8. عداد أرقام متحرك عند الظهور
+  // ═══════════════════════════════════════
+  var counted = false;
+  var gradeSection = document.querySelector('.grades-box');
+  if (gradeSection) {
+    var gradeObs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting && !counted) {
+        counted = true;
+        gradeSection.style.transform = 'scale(1.02)';
+        setTimeout(function() { gradeSection.style.transform = ''; }, 300);
+      }
+    }, { threshold: 0.5 });
+    gradeObs.observe(gradeSection);
+  }
+
+  // ═══════════════════════════════════════
+  // 9. بطاقة الصورة — Flip + Drag تدوير
+  // ═══════════════════════════════════════
+  (function() {
+    var wrap = document.getElementById('heroFlip');
+    var inner = document.getElementById('flipInner');
+    if (!wrap || !inner) return;
+
+    var isFlipped = false;
+    var isDragging = false;
+    var startX = 0, startY = 0;
+    var currentRotX = 0, currentRotY = 0;
+    var dragRotX = 0, dragRotY = 0;
+    var dragThreshold = 8;
+    var hasMoved = false;
+
+    // كبسة = Flip
+    function handleTap() {
+      if (hasMoved) return;
+      isFlipped = !isFlipped;
+      currentRotX = 0;
+      currentRotY = isFlipped ? 180 : 0;
+      inner.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+      inner.style.transform = 'rotateX(' + currentRotX + 'deg) rotateY(' + currentRotY + 'deg)';
+    }
+
+    // تحديث الدوران أثناء السحب
+    function updateDrag(clientX, clientY) {
+      var dx = clientX - startX;
+      var dy = clientY - startY;
+      if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) {
+        hasMoved = true;
+      }
+      var baseY = isFlipped ? 180 : 0;
+      dragRotY = baseY + dx * 0.8;
+      dragRotX = dy * -0.5;
+      inner.style.transition = 'none';
+      inner.style.transform = 'rotateX(' + dragRotX + 'deg) rotateY(' + dragRotY + 'deg)';
+    }
+
+    // إرجاع للمكان بعد السحب
+    function snapBack() {
+      var targetY = isFlipped ? 180 : 0;
+      currentRotX = 0;
+      currentRotY = targetY;
+      inner.style.transition = 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+      inner.style.transform = 'rotateX(0deg) rotateY(' + targetY + 'deg)';
+    }
+
+    // === ماوس ===
+    wrap.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      isDragging = true;
+      hasMoved = false;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!isDragging) return;
+      updateDrag(e.clientX, e.clientY);
+    });
+    document.addEventListener('mouseup', function() {
+      if (!isDragging) return;
+      isDragging = false;
+      if (!hasMoved) {
+        handleTap();
+      } else {
+        snapBack();
+      }
+    });
+
+    // === لمس ===
+    wrap.addEventListener('touchstart', function(e) {
+      isDragging = true;
+      hasMoved = false;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    wrap.addEventListener('touchmove', function(e) {
+      if (!isDragging) return;
+      updateDrag(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+    wrap.addEventListener('touchend', function() {
+      if (!isDragging) return;
+      isDragging = false;
+      if (!hasMoved) {
+        handleTap();
+      } else {
+        snapBack();
+      }
+    }, { passive: true });
+
+    // === hover 3D خفيف (ديسكتوب) ===
+    if (!isMobile) {
+      wrap.addEventListener('mousemove', function(e) {
+        if (isDragging) return;
+        var rect = wrap.getBoundingClientRect();
+        var x = e.clientX - rect.left - rect.width / 2;
+        var y = e.clientY - rect.top - rect.height / 2;
+        var baseY = isFlipped ? 180 : 0;
+        inner.style.transition = 'transform 0.1s ease-out';
+        inner.style.transform = 'rotateX(' + (y * -0.12) + 'deg) rotateY(' + (baseY + x * 0.12) + 'deg)';
+      });
+      wrap.addEventListener('mouseleave', function() {
+        if (isDragging) return;
+        snapBack();
+      });
+    }
+  })();
+
+  // ═══════════════════════════════════════
+  // 10. أزرار مغناطيسية — تتحرك مع الماوس
+  // ═══════════════════════════════════════
+  if (!isMobile) {
+    // إضافة كلاس للأزرار
+    document.querySelectorAll('.visit-btn, .contact-link, #music-btn, .skill-tag').forEach(function(btn) {
+      btn.classList.add('magnetic-btn');
+    });
+
+    document.querySelectorAll('.magnetic-btn').forEach(function(btn) {
+      btn.addEventListener('mousemove', function(e) {
+        var rect = btn.getBoundingClientRect();
+        var x = e.clientX - rect.left - rect.width / 2;
+        var y = e.clientY - rect.top - rect.height / 2;
+        var strength = 0.3;
+        btn.style.transform = 'translate(' + (x * strength) + 'px, ' + (y * strength) + 'px)';
+      });
+      btn.addEventListener('mouseleave', function() {
+        btn.style.transform = 'translate(0, 0)';
+      });
+    });
+  }
+
+})();
 </script>
 
 </body>
